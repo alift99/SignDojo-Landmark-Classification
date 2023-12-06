@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 
 class LinearClassifier(nn.Module):
-    def __init__(self, input_dim=42, hidden_dim=64, output_dim=26):
+    def __init__(self, input_dim=42, hidden_dim=128, output_dim=26):
         super(LinearClassifier, self).__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim)
         self.relu = nn.ReLU()
@@ -21,14 +21,14 @@ class LinearClassifier(nn.Module):
 
 def train():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = LinearClassifier(input_dim=42, hidden_dim=64, output_dim=26).to(device)
+    model = LinearClassifier(input_dim=42, hidden_dim=128, output_dim=26).to(device)
 
-    train_dataset = LandmarkFeatures(filename='train.csv')
-    train_loader = DataLoader(train_dataset, batch_size=6, shuffle=True, num_workers=1)
-    valid_dataset = LandmarkFeatures(filename='valid.csv')
-    valid_loader = DataLoader(valid_dataset, batch_size=6, shuffle=False, num_workers=1)
-    test_dataset = LandmarkFeatures(filename='test.csv')
-    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=1)
+    train_dataset = LandmarkFeatures(filename='datasets/train.csv')
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=0)
+    valid_dataset = LandmarkFeatures(filename='datasets/valid.csv')
+    valid_loader = DataLoader(valid_dataset, batch_size=16, shuffle=False, num_workers=0)
+    test_dataset = LandmarkFeatures(filename='datasets/test.csv')
+    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=0)
 
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -86,7 +86,7 @@ def train():
 
     accuracy = correct / total
     print(f"Test Accuracy: {accuracy * 100:.2f}%")
-    torch.save(model.state_dict(), 'linear_model.pth')
+    torch.save(model.state_dict(), 'saved_models/linear_model.pth')
 
 
 if __name__ == '__main__':
